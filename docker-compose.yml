@@ -1,0 +1,7 @@
+services:
+  app:
+    build: .
+    command: ["hash"]
+    working_dir: /work
+    volumes:
+      - ./work:/work

@@ -1,0 +1,33 @@
+plugins {
+    id 'java'
+    id 'org.springframework.boot' version '3.3.3' apply false
+}
+
+java.sourceCompatibility = JavaVersion.VERSION_21
+compileJava.options.encoding = 'UTF-8'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation platform(org.springframework.boot.gradle.plugin.SpringBootPlugin.BOM_COORDINATES)
+    implementation 'org.springframework.boot:spring-boot-starter'
+    implementation 'info.picocli:picocli-spring-boot-starter:4.7.6'
+}
+
+jar {
+  manifest {
+    attributes(
+      'Main-Class': 'example.ToolApplication',
+      'Class-Path': configurations.runtimeClasspath.collect { it.getName() }.join(' ')
+    )
+  }
+}
+
+task copyAllDependencies(type: Copy) {
+    from configurations.runtimeClasspath
+    into "${buildDir}/libs"
+}
+
+build.dependsOn(copyAllDependencies)
