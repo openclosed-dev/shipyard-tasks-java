@@ -1,11 +1,8 @@
 package example;
 
 import java.io.IOException;
-import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.SimpleFileVisitor;
-import java.nio.file.attribute.BasicFileAttributes;
 import java.security.MessageDigest;
 import java.util.HexFormat;
 import java.util.concurrent.Callable;
@@ -19,7 +16,7 @@ import picocli.CommandLine.Option;
 @Command(
     name = "hash"
 )
-public class Hash extends SimpleFileVisitor<Path> implements Callable<Integer> {
+public class Hash implements Callable<Integer> {
 
     private static final Logger LOG = LoggerFactory.getLogger(Hash.class);
 
@@ -43,18 +40,12 @@ public class Hash extends SimpleFileVisitor<Path> implements Callable<Integer> {
         this.buffer = new byte[BUFFER_SIZE];
 
         var currentDir = Path.of(".");
-        Files.walkFileTree(currentDir, this);
-
-        return 0;
-    }
-
-    @Override
-    public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
-        var files = Files.list(dir).filter(Files::isRegularFile).toList();
+        var files = Files.walk(currentDir).filter(Files::isRegularFile).toList();
         for (var file : files) {
             generateHashFileFrom(file);
         }
-        return FileVisitResult.CONTINUE;
+
+        return 0;
     }
 
     private void generateHashFileFrom(Path path) throws IOException {
