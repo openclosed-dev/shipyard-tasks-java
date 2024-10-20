@@ -4,7 +4,8 @@ import picocli.CommandLine.Command;
 
 @Command(
     subcommands = {
-        Hash.class    
+        Hash.class,
+        Zip.class
     }
 )
 public class RootCommand {
